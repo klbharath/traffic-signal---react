@@ -1,25 +1,36 @@
-import logo from './logo.svg';
+import React, { useEffect, useState } from 'react';
 import './App.css';
+import Signal from './Signal';
 
-function App() {
+const signals = [
+  { signal: 'red', timeout: 5000, color: 'red' },
+  { signal: 'orange', timeout: 3000, color: 'orange' },
+  { signal: 'green', timeout: 1000, color: 'green' },
+];
+
+const App = () => {
+  const [signal, setSignal] = useState(0);
+  useEffect(() => {
+    const signalInterval = setInterval(() => {
+      let nextSignal = signal + 1;
+      if (nextSignal === signals.length) {
+        setSignal(0);
+      } else {
+        setSignal(nextSignal);
+      }
+    }, signals[signal].timeout);
+
+    const clearSignalInterval = () => clearInterval(signalInterval);
+
+    return () => {
+      clearSignalInterval();
+    };
+  }, [signal]);
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Signal signalColor={signals[signal]?.color} />
     </div>
   );
-}
+};
 
 export default App;
